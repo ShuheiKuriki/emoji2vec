@@ -1,8 +1,21 @@
+このリポジトリは本家のemoji2vecからフォークしたものです。
+本家からの変更点はtensorflowとgensim周りの修正を行ったことと、
+自然言語文を１単語ずつ絵文字文に翻訳するコードをResults.ipynb内に書いたことです。
+
+# 必要なもの
+このリポジトリ内のコードを実行するためには以下のものが必要です。
+- word2vecの単語ベクトル　/data/word2vec/GoogleNews-vectors-negative300.bin
+- results/model.ckptファイル
+- emoji_embeddings.p
+- generated_embeddings.p
+
+単語ベクトルのファイルはネットから適当に拾ってくる。あとの３つはtrain.pyを実行すると勝手にしかるべき場所に生成されます。
+
 # emoji2vec
 
-This is the accompanying repository to [emoji2vec: Learning Emoji 
-Representations from their Description](https://arxiv.org/pdf/1609.08359.pdf) 
-the paper recently released by Ben Eisner, Tim Rocktäschel, 
+This is the accompanying repository to [emoji2vec: Learning Emoji
+Representations from their Description](https://arxiv.org/pdf/1609.08359.pdf)
+the paper recently released by Ben Eisner, Tim Rocktäschel,
 Isabelle Augenstein, Matko Bošnjak, and Sebastian Riedel.
 
 In this repository, we present the code that we used to train
@@ -14,8 +27,8 @@ and several tools for analyzing the performance of the vectors trained.
 If you are interested in using the emoji vectors we used in our paper,
 they can be found in Gensim text/binary format in `./pre-trained/`. The
 pre-trained vectors are meant to be used in conjunction with `word2vec`,
-and are therefore 300-dimensional. Other dimensions can be trained 
-manually, as explained below. These vectors correspond with the following 
+and are therefore 300-dimensional. Other dimensions can be trained
+manually, as explained below. These vectors correspond with the following
 hyperparameters:
 
 ```
@@ -30,7 +43,7 @@ params = {
 ```
 
 ### Basic Usage
-Once you've downloaded the pre-trained model, you can easily integrate 
+Once you've downloaded the pre-trained model, you can easily integrate
 emoji embeddings into your projects like so:
 
 ```
@@ -45,26 +58,26 @@ There are several prerequisites to using the code:
 
 - You must supply your own pretrained word vectors that are compatible
 with the Gensim tool. For instance, you can download the Google News
-word2vec dataset [here](https://code.google.com/archive/p/word2vec/). 
+word2vec dataset [here](https://code.google.com/archive/p/word2vec/).
 This must be in the binary format, rather than the .txt format.
 - To download tweets using Tweepy, you must create a Twitter application
 at [https://apps.twitter.com/](https://apps.twitter.com/), and place
-the four generated keys in `secret.txt` in the directory where you 
+the four generated keys in `secret.txt` in the directory where you
 run the Python script. However, you may not have to download the tweets,
 since they are stored raw in a `pickle` file in the repository.
 
 ## CLI Arguments
 Much of this code shares a common command line interface, which allows
-you to supply hyperparameters for training and model 
+you to supply hyperparameters for training and model
 generation/retrieval as well as file locations. The following can be
 supplied:
 
 - `-d`: directory for training data (default is `./data/training`)
 - `-w`: path to the word embeddings (i.e. Google News word2vec)
-- `-m`: file where we store mapping between index and emoji, for 
+- `-m`: file where we store mapping between index and emoji, for
 convenient caching between runs
-- `-em`: file where we cache the vectorized phrases so we don't have to 
-recompute each time, only change when you change the train, test, and 
+- `-em`: file where we cache the vectorized phrases so we don't have to
+recompute each time, only change when you change the train, test, and
 dev files
 - `-k`: output dimension of the emoji vectors we are training
 - `-b`: number of positive examples in a training batch
@@ -73,7 +86,7 @@ dev files
 - `-l`: learning rate
 - `-dr`: dropout rate
 - `-t`: threshold for classification, used in accuracy calculations
-- `-ds`: name of the dataset we are training on, mainly for output 
+- `-ds`: name of the dataset we are training on, mainly for output
 folder
 
 These are defined in `parameter_parser.py`.
@@ -82,17 +95,17 @@ These are defined in `parameter_parser.py`.
 
 The Emoji2Vec model, as well as a class for passing in hyperparameters,
 can be found in `model.py`. The Emoji2Vec class is a TensorFlow
-implementation of our model. 
+implementation of our model.
 
 Important to note is that one can evaluate
-the correlation between a phrase and an emoji in two ways: one can 
-either input a raw vector and an emoji index (for general queries), 
+the correlation between a phrase and an emoji in two ways: one can
+either input a raw vector and an emoji index (for general queries),
 or the index of a training phrase and the index of an emoji (indices
-being the indices in the Knowledge Base). Typically, unless you are 
-training the model on a totally different set of training examples, 
-you'll want to use set `use_embeddings` to `False` in the constructor 
-of the model. Otherwise, you'll have to pass in embeddings generated 
-by the `generate_embeddings` function in `utils.py`. 
+being the indices in the Knowledge Base). Typically, unless you are
+training the model on a totally different set of training examples,
+you'll want to use set `use_embeddings` to `False` in the constructor
+of the model. Otherwise, you'll have to pass in embeddings generated
+by the `generate_embeddings` function in `utils.py`.
 
 In this initial release, the internals are a bit convoluted, so it would
 probably behoove anyone using the codebase to use `train.py` instead of
@@ -100,7 +113,7 @@ using the Emoji2Vec class directly.
 
 ## Phrase2Vec
 
-The `Phrase2Vec` class is a convenience wrapper to compute vector sums 
+The `Phrase2Vec` class is a convenience wrapper to compute vector sums
 for phrases. The class can be constructed with two different vector
 sets simultaneously: a word2vec Gensim object and an emoji vector Gensim
 object. Alternatively, you can provide two filenames to do so. Query
@@ -112,27 +125,27 @@ vec = phrase2Vec['I am really happy right now! 😄]
 
 ## Train
 
-To train a single model, run `train.py` with any combination of the 
+To train a single model, run `train.py` with any combination of the
 hyperparameters above. For instance,
 
 ```
 python3 train.py -k=300 -b=4 -r=1 -l=0.001 -ds=unicode -d=./data/training -t=0.5
 ```
 
-will generate emoji vectors with dimension 300, and will train in 
-batches of 8 (4 positive, 4 negative examples) at a learning rate of 
-0.001. `./data/training/` must contain `train.txt`, `dev.txt`, and 
+will generate emoji vectors with dimension 300, and will train in
+batches of 8 (4 positive, 4 negative examples) at a learning rate of
+0.001. `./data/training/` must contain `train.txt`, `dev.txt`, and
 `test.txt`, the format of each being a tab-delimited, newline-delimited:
 
 ```
 beating heart	🍮	False
 ```
 
-The program will output various metrics, including accuracy (at the 
+The program will output various metrics, including accuracy (at the
 threshold provided), f1 score, and auc for a ROC curve. Additionally,
 the program will generate a Gensim representation of the model, a
-TensorFlow representation of the model, a TensorFlow `tensorboard` 
-folder, and a cache of the results of the model's predictions on the 
+TensorFlow representation of the model, a TensorFlow `tensorboard`
+folder, and a cache of the results of the model's predictions on the
 train and dev datasets.
 
 These results can be found in the following folder:
@@ -161,7 +174,7 @@ search_params = {
 ```
 
 NOTE: The epochs parameter will not be explored exactly as input. Since
-larger batches take more epochs to converge, we scale the number of 
+larger batches take more epochs to converge, we scale the number of
 epochs by the batch size.
 
 ## Twitter Sentiment Dataset
@@ -182,7 +195,7 @@ To generate a 2D visualization of the emoji embeddings, run:
 python3 visualize.py {arguments}
 ```
 
-This technique uses t-SNE to project from N-dimensions into 2 
+This technique uses t-SNE to project from N-dimensions into 2
 dimensions.
 
 ## Utils
@@ -196,16 +209,16 @@ We characterize the generated emoji embeddings in two files:
 
 ### Results.ipynb
 
-`Results.ipynb` displays quantitative and qualitative metrics for a 
+`Results.ipynb` displays quantitative and qualitative metrics for a
 given model. Change the hyperparameters near the top of the file to
 evaluate a different model.
 
 ### TwitterClassification.ipynb
-`TwitterClassification.ipynb` contains an evaluation scheme for the 
-Twitter sentiment classification task outlined in the paper. It 
+`TwitterClassification.ipynb` contains an evaluation scheme for the
+Twitter sentiment classification task outlined in the paper. It
 implements two rudimentary classifiers.
 
 ## Contact
 
-Contact me at `ben [dot] a [dot] eisner [at] gmail [dot] com` with questions about 
+Contact me at `ben [dot] a [dot] eisner [at] gmail [dot] com` with questions about
 implementation or requests.
