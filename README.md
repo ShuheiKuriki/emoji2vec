@@ -3,15 +3,9 @@
 自然言語文を１単語ずつ絵文字文に翻訳するコードをResults.ipynb内に書いたことです。
 
 # 必要なもの
-<<<<<<< HEAD
 このリポジトリ内のコードを実行するためには以下のものが必要です。
 - word2vecの単語ベクトル　/data/word2vec/GoogleNews-vectors-negative300.bin
 - results/model.ckptファイル
-=======
-このリポジトリ内のコードを実行するためには以下のものが必要です
-- word2vecの単語ベクトル/data/word2vec/GoogleNews-vectors-negative300.bin
-- result/model.ckptファイル →train.pyを実行すると勝手にできる
->>>>>>> 8896dd50ae88b457209dedbc7ff25117fe6af863
 - emoji_embeddings.p
 - generated_embeddings.p
 
